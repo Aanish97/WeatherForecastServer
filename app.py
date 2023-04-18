@@ -1,45 +1,61 @@
-from flask import Flask, render_template, jsonify, request, url_for
-from shapely.geometry import Point as Shapely_point, mapping
-from geojson import Point as Geoj_point, Polygon as Geoj_polygon, Feature, FeatureCollection
-from datetime import datetime
-from sqlalchemy import *
-import pandas as pd
-import geopandas as gpd
-import numpy as np
+#from flask import Flask, render_template, jsonify, request, url_for
+#from shapely.geometry import Point as Shapely_point, mapping
+#from geojson import Point as Geoj_point, Polygon as Geoj_polygon, Feature, FeatureCollection
+#from datetime import datetime
+#from sqlalchemy import *
+#import pandas as pd
+#import geopandas as gpd
+#import numpy as np
 #import psycopg2 as pg
-import json 
-import leaflet as L
-from elastic_app_search import Client
-from elasticsearch import Elasticsearch
-from elasticapm.contrib.flask import ElasticAPM
-import matplotlib.colors as cl
-import h3
-import h3.api.basic_int as h3int
-import json
-import h3pandas
-import cmasher as cmr
-import plotly
-import plotly.express as px
-from scipy.stats import percentileofscore
-from scipy import stats
-import plotly.graph_objects as go
-import os 
-import datetime
-from netCDF4 import Dataset
-import shapely.wkt
-import folium
-import ftplib
-from ftplib import FTP
-from pathlib import Path
-from os import path, walk
+#import json 
+#import leaflet as L
+#from elastic_app_search import Client
+#from elasticsearch import Elasticsearch
+#from elasticapm.contrib.flask import ElasticAPM
+#import matplotlib.colors as cl
+#import h3
+#import h3.api.basic_int as h3int
+#import json
+#import h3pandas
+#import cmasher as cmr
+#import plotly
+#import plotly.express as px
+#from scipy.stats import percentileofscore
+#from scipy import stats
+#import plotly.graph_objects as go
+#import os 
+#import datetime
+#from netCDF4 import Dataset
+#import shapely.wkt
+#import folium
+#import ftplib
+#from ftplib import FTP
+#from pathlib import Path
+#from os import path, walk
 
-import timezonefinder, pytz
-import plotly.express as px
-import plotly.graph_objects as go
-from geopy.geocoders import Nominatim
-import math
+#import timezonefinder, pytz
+#import plotly.express as px
+#import plotly.graph_objects as go
+#from geopy.geocoders import Nominatim
+#import math
 
 #from models import *
+
+from flask import Flask, render_template, jsonify, request, url_for
+from datetime import datetime
+import pandas as pd
+import numpy as np
+import json
+import plotly
+import os
+import datetime
+from netCDF4 import Dataset
+import timezonefinder, pytz
+import plotly.express as px
+from geopy.geocoders import Nominatim
+from dotenv import load_dotenv
+
+
 
 def fixVarName(varName):
 	newVarName = str(varName[1:-1])
@@ -290,6 +306,7 @@ def weatherForecastVariables():
 @app.route('/weatherForecast')
 def weatherForecast():
 	returnType = 'json' #default
+	app.logger.debug('this is a DEBUG message')
 
 	lat = request.args.get('lat')
 	lon = request.args.get('lon')
@@ -412,3 +429,8 @@ def weatherForecast():
 if __name__ == '__main__':
 	extra_files = [updated_data_available_file,]
 	app.run(host='0.0.0.0' , port=5000, debug=True, extra_files=extra_files)
+else:
+	gunicorn_logger = logging.getLogger('gunicorn.error')
+	app.logger.handlers = gunicorn_logger.handlers
+	app.logger.setLevel(gunicorn_logger.level)
+
