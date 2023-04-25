@@ -10,7 +10,7 @@ from netCDF4 import Dataset
 import timezonefinder, pytz
 import plotly.express as px
 from geopy.geocoders import Nominatim
-
+import logging
 
 
 def fixVarName(varName):
