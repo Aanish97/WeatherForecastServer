@@ -34,9 +34,9 @@ rootUrl = 'https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/'
 #outDir = '/home/sumer/my_project_dir/ncep/'
 #updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
 
-# outDir = '/root/ncep/data/'
-outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
-updated_data_available_file = '/root/ncep/scripts/updated_data_available.txt'
+outDir = '/var/www/html/ncep/data/'
+# outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
+updated_data_available_file = '/var/www/html/ncep/updated_data_available.txt'
 
 
 
@@ -186,7 +186,7 @@ response = requests.get(rootUrl)
 soup = BeautifulSoup(response.text, 'html.parser')
 links = soup.find_all('a')
 ll=[str(x) for x in links if str(x).startswith('<a href=\"gfs.')]
-lastDtStr = ll[-1].split('gfs.')[1][0:8]
+# lastDtStr = ll[-1].split('gfs.')[1][0:8]
 
 
 #dtStr = lastDtStr
