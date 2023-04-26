@@ -203,7 +203,7 @@ if any(fname.endswith('.nc') for fname in os.listdir(outDir)):
     print('Done!')
 
 #Create new files
-for CC in CC_list:
+for CC in ['00']:
     for FFF in FFF_list:
         try:
             #CC='00'
@@ -244,11 +244,10 @@ for CC in CC_list:
             print('\tDone!')
             end_time = datetime.datetime.now()
             print('\t********** Elapsed: '+str(end_time - start_time))
-        except:
-            print('Error in CC='+CC+', FFF='+FFF)
+        except Exception as e:
+            print(f'{e}, Error in CC='+CC+', FFF='+FFF)
             continue
-                  
-   
+
 #touch file
 print('\nWriting updated_data_available.txt file')
 cmd_complete = 'touch '+updated_data_available_file
