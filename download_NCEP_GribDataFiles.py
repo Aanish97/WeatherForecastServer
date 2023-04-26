@@ -219,7 +219,7 @@ for CC in ['00']:
 
             outFile = outDir + frct_dtStr+'__'+dest_dtStr +'__'+FFF+'___'+gribFile
             print('\n\n\tDownloading GRIB File '+gribFile+' --> '+outFile)
-            print('\n{urlStr}')
+            print(f'\n{urlStr}')
             resp = urllib.request.urlretrieve(urlStr, outFile)
             print('\tDone!')
 
