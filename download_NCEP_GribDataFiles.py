@@ -34,7 +34,8 @@ rootUrl = 'https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/'
 #outDir = '/home/sumer/my_project_dir/ncep/'
 #updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
 
-outDir = '/root/ncep/data/'
+# outDir = '/root/ncep/data/'
+outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
 updated_data_available_file = '/root/ncep/scripts/updated_data_available.txt'
 
 
