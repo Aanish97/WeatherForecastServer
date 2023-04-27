@@ -23,11 +23,11 @@ def fixVarName(varName):
 
 ############ globals
 #outDir = '/home/sumer/my_project_dir/ncep/'
-#updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
-outDir = '/var/www/html/ncep/data/'
-# outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
-updated_data_available_file = '/var/www/html/ncep/updated_data_available.txt'
-# updated_data_available_file = '/Users/aanish/PycharmProjects/WeatherForecastServer/updated_data_available.txt'
+updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
+# outDir = '/var/www/html/ncep/data/'
+outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
+# updated_data_available_file = '/var/www/html/ncep/updated_data_available.txt'
+updated_data_available_file = '/Users/aanish/PycharmProjects/WeatherForecastServer/updated_data_available.txt'
 list_of_ncfiles = [x for x in os.listdir(outDir) if x.endswith('.nc')]
 list_of_ncfiles.sort()
 time_dim = len(list_of_ncfiles)
@@ -268,9 +268,9 @@ def weatherForecast():
 	returnType = 'json' #default
 	app.logger.debug('this is a DEBUG message')
 	
-	geoID = request.values.get('geoid')
+	geoID = request.args.get('geoid')
 	lat, long = 0, 0
-	if geoID:
+	if geoID is not None:
 		resp = requests.get(f'https://api-ar.agstack.org/fetch-field-centroid/{geoID}')
 		resp_json = json.loads(resp.text)
 		if resp_json.get('Centroid'):
@@ -281,8 +281,8 @@ def weatherForecast():
 			res = "{'Error': 'Invalid GeoID'}"
 			return res
 	else:
-		lat = request.values.get('lat')
-		lon = request.values.get('lon')
+		lat = request.args.get('lat')
+		lon = request.args.get('lon')
 
 	try:
 		returnType = request.args.get('format')
