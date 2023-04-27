@@ -1,3 +1,4 @@
+import requests
 from flask import Flask, render_template, jsonify, request, url_for
 from datetime import datetime
 import pandas as pd
@@ -24,9 +25,9 @@ def fixVarName(varName):
 #outDir = '/home/sumer/my_project_dir/ncep/'
 #updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
 #outDir = '/root/ncep/data/'
-outDir = '/var/www/html/ncep/data/'
+outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
 #updated_data_available_file = '/root/ncep/scripts/updated_data_available.txt'
-updated_data_available_file = '/var/www/html/ncep/updated_data_available.txt'
+updated_data_available_file = '/Users/aanish/PycharmProjects/WeatherForecastServer/updated_data_available.txt'
 list_of_ncfiles = [x for x in os.listdir(outDir) if x.endswith('.nc')]
 list_of_ncfiles.sort()
 time_dim = len(list_of_ncfiles)
@@ -179,7 +180,9 @@ def fixToLocalTime(df,lat,lon):
 	timezone_str = tf.certain_timezone_at(lat=float(lat), lng=float(lon))
 	timezone = pytz.timezone(timezone_str)
 
-	df['FORECAST_DATE_LOCAL']=df.FORECAST_DATE_UTC.apply(lambda x: x + timezone.utcoffset(x))
+	if len(df) == 0:
+		df = pd.DataFrame(columns=['FORECAST_DATE_UTC'])
+	df['FORECAST_DATE_LOCAL'] = df.FORECAST_DATE_UTC.apply(lambda x: x + timezone.utcoffset(x))
 	
 	return df
 
@@ -264,9 +267,23 @@ def weatherForecastVariables():
 def weatherForecast():
 	returnType = 'json' #default
 	app.logger.debug('this is a DEBUG message')
+	
+	geoID = request.values.get('geoid')
+	lat, long = 0, 0
+	if geoID:
+		resp = requests.get(f'https://api-ar.agstack.org/fetch-field-centroid/{geoID}')
+		resp_json = json.loads(resp.text)
+		if resp_json.get('Centroid'):
+			centroid = resp_json.get('Centroid')
+			lat = centroid[0]
+			lon = centroid[1]
+		else:
+			res = "{'Error': 'Invalid GeoID'}"
+			return res
+	else:
+		lat = request.values.get('lat')
+		lon = request.values.get('lon')
 
-	lat = request.args.get('lat')
-	lon = request.args.get('lon')
 	try:
 		returnType = request.args.get('format')
 	except:
@@ -385,7 +402,7 @@ def weatherForecast():
 #main to run the app
 if __name__ == '__main__':
 	extra_files = [updated_data_available_file,]
-	app.run(host='0.0.0.0' , port=5000, debug=True, extra_files=extra_files)
+	app.run(host='0.0.0.0' , port=8000, debug=True, extra_files=extra_files)
 else:
 	gunicorn_logger = logging.getLogger('gunicorn.error')
 	app.logger.handlers = gunicorn_logger.handlers
