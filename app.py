@@ -299,7 +299,7 @@ def weatherForecast():
 			tok = locStr.address.split(' ')
 			loc = ' '.join(tok[3:])
 		except:
-			loc='Lat='+lat+', Lon='+lon
+			loc = 'Lat='+str(lat)+', Lon='+str(lon)
 
 		#Make the various graphs
 		varName = 'Air Temp [C] (2 m above surface)'
