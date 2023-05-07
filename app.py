@@ -12,6 +12,8 @@ import timezonefinder, pytz
 import plotly.express as px
 from geopy.geocoders import Nominatim
 import logging
+from dotenv import load_dotenv
+load_dotenv()
 
 
 def fixVarName(varName):
@@ -21,13 +23,9 @@ def fixVarName(varName):
 
 	return newVarName
 
-############ globals
-#outDir = '/home/sumer/my_project_dir/ncep/'
-updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
-outDir = '/var/www/html/ncep/data/'
-# outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
-updated_data_available_file = '/var/www/html/ncep/updated_data_available.txt'
-# updated_data_available_file = '/Users/aanish/PycharmProjects/WeatherForecastServer/updated_data_available.txt'
+# GLOBALS
+outDir = os.getenv('outDir')
+updated_data_available_file = os.getenv('updated_data_available_file')
 list_of_ncfiles = [x for x in os.listdir(outDir) if x.endswith('.nc')]
 list_of_ncfiles.sort()
 time_dim = len(list_of_ncfiles)
