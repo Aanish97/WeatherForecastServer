@@ -1,4 +1,6 @@
+beautifulsoup4==4.12.2
 black==22.8.0
+bs4==0.0.1
 certifi==2022.12.7
 cffi==1.15.1
 cftime==1.6.2
@@ -9,6 +11,7 @@ filelock==3.4.1
 Flask==2.0.3
 geographiclib==2.0
 geopy==2.3.0
+greenlet==2.0.2
 h3==3.7.6
 idna==3.4
 importlib-metadata==4.8.3
@@ -31,11 +34,13 @@ python-dotenv==1.0.0
 pytz==2023.3
 requests==2.30.0
 six==1.16.0
+soupsieve==2.4.1
+SQLAlchemy==2.0.12
 tenacity==8.2.2
 timezonefinder==6.2.0
 tomli==1.2.3
 typed-ast==1.5.4
-typing_extensions==4.1.1
+typing_extensions==4.5.0
 urllib3==2.0.2
 virtualenv==20.17.1
 virtualenv-clone==0.5.7

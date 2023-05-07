@@ -183,7 +183,7 @@ if any(fname.endswith('.nc') for fname in os.listdir(outDir)):
     print('Done!')
 
 #Create new files
-for CC in ['00']:
+for CC in CC_list:
     for FFF in FFF_list:
         try:
             #CC='00'
