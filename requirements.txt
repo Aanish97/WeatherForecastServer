@@ -27,6 +27,7 @@ platformdirs==2.4.0
 plotly==5.14.1
 pycparser==2.21
 python-dateutil==2.8.2
+python-dotenv==1.0.0
 pytz==2023.3
 requests==2.30.0
 six==1.16.0
