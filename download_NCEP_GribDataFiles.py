@@ -1,43 +1,22 @@
-import warnings
-import matplotlib.pyplot as plt
-import numpy as np
+import os
+import requests
 import pandas as pd
 from netCDF4 import Dataset
-from pyproj import Proj
-import matplotlib.cm as cm
 import datetime as datetime
-import mpl_toolkits as mpl
-warnings.filterwarnings("ignore")
-import shutil
-import urllib.request as request
-from contextlib import closing
 import urllib.request
-import sys
-#import cartopy.crs as ccrs
-#import cartopy.feature as cfeature
-import os, sys
-import geopandas as gpd
-from pprint import pprint
 from bs4 import BeautifulSoup
-import requests
-import json
-from geoalchemy2.shape import to_shape
-from sqlalchemy import create_engine
-from geoalchemy2 import Geometry, WKTElement
 from sqlalchemy import *
+import warnings
+warnings.filterwarnings("ignore")
+
+from dotenv import load_dotenv
+load_dotenv()
 
 
-### GLOBALS
-#get the latest date
-rootUrl = 'https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/'
-
-#outDir = '/home/sumer/my_project_dir/ncep/'
-#updated_data_available_file = '/home/sumer/weather/weather-forecast/updated_data_available.txt'
-
-outDir = '/var/www/html/ncep/data/'
-# outDir = '/Users/aanish/PycharmProjects/WeatherForecastServer/data/'
-updated_data_available_file = '/var/www/html/ncep/updated_data_available.txt'
-
+# GLOBALS
+rootUrl = os.getenv('rootURL')
+outDir = os.getenv('outDir')
+updated_data_available_file = os.getenv('updated_data_available_file')
 
 
 ###############################################

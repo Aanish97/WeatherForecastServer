@@ -1,17 +1,19 @@
+import os
+import json
+import pytz
+import plotly
+import datetime
 import requests
-from flask import Flask, render_template, jsonify, request, url_for
-from datetime import datetime
 import pandas as pd
 import numpy as np
-import json
-import plotly
-import os
-import datetime
+from datetime import datetime
 from netCDF4 import Dataset
-import timezonefinder, pytz
+import timezonefinder
 import plotly.express as px
 from geopy.geocoders import Nominatim
+from flask import Flask, render_template, jsonify, request, url_for
 import logging
+
 from dotenv import load_dotenv
 load_dotenv()
 
