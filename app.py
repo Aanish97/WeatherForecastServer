@@ -15,10 +15,8 @@ from flask import Flask, render_template, jsonify, request, url_for
 import logging
 
 from dotenv import load_dotenv
-from sqlalchemy import text
-
-from utils import Utils
 from dbms import app
+from utils import Utils
 
 load_dotenv()
 
@@ -178,8 +176,7 @@ if len(list_of_ncfiles) > 0:
         else:
             var_val4D = np.reshape(var_val3D , (720,1440,time_dim,1))
         i=i+1
-    # Utils.insert_var_val_4d_db(var_val4D, updatedDtStr)
-    print("here")
+    Utils.insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt)
 
 def fixToLocalTime(df,lat,lon):
     tf = timezonefinder.TimezoneFinder()

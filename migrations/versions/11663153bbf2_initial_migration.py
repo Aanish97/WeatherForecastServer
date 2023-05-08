@@ -1,8 +1,8 @@
 """Initial migration.
 
-Revision ID: 30a5ad6197a2
+Revision ID: 11663153bbf2
 Revises: 
-Create Date: 2023-05-08 03:49:49.361322
+Create Date: 2023-05-09 02:58:13.641687
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '30a5ad6197a2'
+revision = '11663153bbf2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,8 +31,8 @@ def upgrade():
     sa.Column('precipitation_rate', sa.Numeric(precision=8, scale=3), nullable=True),
     sa.Column('relative_humidity', sa.Numeric(precision=8, scale=3), nullable=True),
     sa.Column('dew_point_temperature', sa.Numeric(precision=8, scale=3), nullable=True),
-    sa.Column('pressure_reduced_to_msl', sa.Numeric(precision=8, scale=3), nullable=True),
-    sa.Column('pressure', sa.Numeric(precision=8, scale=3), nullable=True),
+    sa.Column('pressure_reduced_to_msl', sa.Numeric(precision=10, scale=3), nullable=True),
+    sa.Column('pressure', sa.Numeric(precision=10, scale=3), nullable=True),
     sa.Column('wind_speed', sa.Numeric(precision=8, scale=3), nullable=True),
     sa.Column('total_cloud_cover', sa.Numeric(precision=8, scale=3), nullable=True),
     sa.Column('forecast_date_local', sa.DateTime(), nullable=True),

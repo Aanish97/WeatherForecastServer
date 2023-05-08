@@ -204,32 +204,32 @@ for CC in CC_list:
             resp = urllib.request.urlretrieve(urlStr, outFile)
             print('\tDone!')
 
-        # fix the coordinates to go from -180 and -
-        outFile2 = outFile + '.grb2'
-        print('\n\tConverting GRIB Coordinates')
-        cmd1 = 'wgrib2 ' + outFile + ' -new_grid latlon -179.75:1440:0.25  -89.75:720:0.25 ' + outFile2
-        ret = os.system(cmd1)
-        print('\tDone!')
+            # fix the coordinates to go from -180 and -
+            outFile2 = outFile + '.grb2'
+            print('\n\tConverting GRIB Coordinates')
+            cmd1 = 'wgrib2 ' + outFile + ' -new_grid latlon -179.75:1440:0.25  -89.75:720:0.25 ' + outFile2
+            ret = os.system(cmd1)
+            print('\tDone!')
 
-        # convert to netCDF file
-        ncfile = outFile2 + '.nc'
-        print('\n\tConvertting GRIB files into NetCDF: ' + outFile2 + ', --> ' + ncfile)
-        cmd2 = 'wgrib2 ' + outFile2 + ' -s | egrep \'(' + varStr + ')\' | wgrib2 -i ' + outFile2 + ' -netcdf ' + ncfile
-        ret = os.system(cmd2)
-        print('\tDone!')
+            # convert to netCDF file
+            ncfile = outFile2 + '.nc'
+            print('\n\tConvertting GRIB files into NetCDF: ' + outFile2 + ', --> ' + ncfile)
+            cmd2 = 'wgrib2 ' + outFile2 + ' -s | egrep \'(' + varStr + ')\' | wgrib2 -i ' + outFile2 + ' -netcdf ' + ncfile
+            ret = os.system(cmd2)
+            print('\tDone!')
 
-        # Delete the grib files
-        print('\n\tDeleting GRIB files: ' + outFile + ', and ' + outFile2)
-        cmd3 = 'rm ' + outFile
-        ret = os.system(cmd3)
-        cmd3 = 'rm ' + outFile2
-        ret = os.system(cmd3)
-        print('\tDone!')
-        end_time = datetime.datetime.now()
-        print('\t********** Elapsed: ' + str(end_time - start_time))
-    except Exception as e:
-    print(f'{e}, Error in CC=' + CC + ', FFF=' + FFF)
-    continue
+            # Delete the grib files
+            print('\n\tDeleting GRIB files: ' + outFile + ', and ' + outFile2)
+            cmd3 = 'rm ' + outFile
+            ret = os.system(cmd3)
+            cmd3 = 'rm ' + outFile2
+            ret = os.system(cmd3)
+            print('\tDone!')
+            end_time = datetime.datetime.now()
+            print('\t********** Elapsed: ' + str(end_time - start_time))
+        except Exception as e:
+            print(f'{e}, Error in CC=' + CC + ', FFF=' + FFF)
+            continue
 
 # touch file
 print('\nWriting updated_data_available.txt file')

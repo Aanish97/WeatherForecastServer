@@ -17,32 +17,33 @@ class WeatherForecast(db.Model):
     precipitation_rate = db.Column(db.Numeric(8, 3))
     relative_humidity = db.Column(db.Numeric(8, 3))
     dew_point_temperature = db.Column(db.Numeric(8, 3))
-    pressure_reduced_to_msl = db.Column(db.Numeric(8, 3))
-    pressure = db.Column(db.Numeric(8, 3))
+    pressure_reduced_to_msl = db.Column(db.Numeric(10, 3))
+    pressure = db.Column(db.Numeric(10, 3))
     wind_speed = db.Column(db.Numeric(8, 3))
     total_cloud_cover = db.Column(db.Numeric(8, 3))
     forecast_date_local = db.Column(db.DateTime)
 
-    # def __init__(self, latitude, longitude, updated_date_utc, forecast_date_utc, air_temperature, soil_temperature,
+    # def __init__(self, latitude, longitude, updated_date_utc, forecast_date_utc, forecast_date_local, air_temperature,
+    #              soil_temperature,
     #              volumetric_soil_moisture_content, rainfall_boolean, precipitation_rate, relative_humidity,
     #              dew_point_temperature, pressure_reduced_to_msl, pressure, wind_speed, total_cloud_cover,
-    #              forecast_date_local):
+    #              ):
     def __init__(self, latitude, longitude, updated_date_utc, forecast_date_utc, forecast_date_local, record):
         self.latitude = latitude,
         self.longitude = longitude,
         self.updated_date_utc = updated_date_utc,
         self.forecast_date_utc = forecast_date_utc,
-        self.air_temperature = record[0],
-        self.soil_temperature = record[1],
-        self.volumetric_soil_moisture_content = record[2],
-        self.rainfall_boolean = record[3],
-        self.precipitation_rate = record[4],
+        self.air_temperature = record[10],
+        self.soil_temperature = record[9],
+        self.volumetric_soil_moisture_content = record[8],
+        self.rainfall_boolean = record[7],
+        self.precipitation_rate = record[6],
         self.relative_humidity = record[5],
-        self.dew_point_temperature = record[6],
-        self.pressure_reduced_to_msl = record[7],
-        self.pressure = record[8],
-        self.wind_speed = record[9],
-        self.total_cloud_cover = record[10],
+        self.dew_point_temperature = record[4],
+        self.pressure_reduced_to_msl = record[3],
+        self.pressure = record[2],
+        self.wind_speed = record[1],
+        self.total_cloud_cover = record[0],
         self.forecast_date_local = forecast_date_local
 
     def __repr__(self):
