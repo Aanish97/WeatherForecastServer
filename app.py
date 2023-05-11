@@ -16,6 +16,7 @@ import logging
 
 from dotenv import load_dotenv
 from dbms import app
+from dbms.models.weatherForecastModel import WeatherForecast
 from utils import Utils
 
 load_dotenv()
@@ -24,9 +25,10 @@ load_dotenv()
 def fixVarName(varName):
     newVarName = str(varName[1:-1])
 
-    newVarName = str(newVarName).replace(' ','').replace(':','_').replace('.','D').replace('-','M')
+    newVarName = str(newVarName).replace(' ', '').replace(':', '_').replace('.', 'D').replace('-', 'M')
 
     return newVarName
+
 
 # GLOBALS
 outDir = os.getenv('outDir')
@@ -44,141 +46,154 @@ varDict = {'TMP_2maboveground': 'Air Temp [C] (2 m above surface)',
 #varList = ['TMP_2maboveground','TSOIL_0D1M0D4mbelowground','SOILW_0D1M0D4mbelowground', 'CRAIN_surface']
 """
 
-#Relative Humidity [%]
+# Relative Humidity [%]
 var1 = ':RH:2 m above ground:'
 
-#Temperature [K]
+# Temperature [K]
 var2 = ':TMP:2 m above ground:'
 
-#Soil Temperature [K]
+# Soil Temperature [K]
 var3 = ':TSOIL:0-0.1 m below ground:'
 var4 = ':TSOIL:0.1-0.4 m below ground:'
 var5 = ':TSOIL:0.4-1 m below ground:'
 var6 = ':TSOIL:1-2 m below ground:'
 
-#Volumetric Soil Moisture Content [Fraction]
+# Volumetric Soil Moisture Content [Fraction]
 var7 = ':SOILW:0-0.1 m below ground:'
 var8 = ':SOILW:0.1-0.4 m below ground:'
 var9 = ':SOILW:0.4-1 m below ground:'
 var10 = ':SOILW:1-2 m below ground:'
 
-#Specific Humidity [kg/kg]
+# Specific Humidity [kg/kg]
 var11 = ':SPFH:2 m above ground:'
 
-#Dew Point Temperature [K]
+# Dew Point Temperature [K]
 var12 = ':DPT:2 m above ground:'
 
-#Pressure Reduced to MSL [Pa]
+# Pressure Reduced to MSL [Pa]
 var13 = ':PRMSL:mean sea level:'
 
-#Pressure [Pa]
+# Pressure [Pa]
 var14 = ':PRES:max wind:'
 
-#Wind Speed (Gust) [m/s]
+# Wind Speed (Gust) [m/s]
 var15 = ':GUST:surface:'
 
-#Total Cloud Cover [%]
+# Total Cloud Cover [%]
 var16 = ':TCDC:entire atmosphere:'
 
-#Downward Short-Wave Radiation Flux [W/m^2]
+# Downward Short-Wave Radiation Flux [W/m^2]
 var17 = ':DSWRF:surface:'
 
-#Downward Long-Wave Radiation Flux [W/m^2]
+# Downward Long-Wave Radiation Flux [W/m^2]
 var18 = ':DLWRF:surface:'
 
-#Upward Short-Wave Radiation Flux [W/m^2]
+# Upward Short-Wave Radiation Flux [W/m^2]
 var19 = ':USWRF:surface:'
 
-#Upward Long-Wave Radiation Flux [W/m^2]
+# Upward Long-Wave Radiation Flux [W/m^2]
 var20 = ':ULWRF:surface:'
 
-#Upward Long-Wave Radiation Flux [W/m^2]
+# Upward Long-Wave Radiation Flux [W/m^2]
 var20 = ':ULWRF:surface:'
 
-#Soil Type [-]
+# Soil Type [-]
 var21 = ':SOTYP:surface:'
 
-#Categorical Rain [-] (3 hr forecast)
+# Categorical Rain [-] (3 hr forecast)
 var22 = ':CRAIN:surface:'
 
-#Precipitation Rate [kg/m^2/s]
+# Precipitation Rate [kg/m^2/s]
 var23 = ':PRATE:surface:'
 
-varStr = var1+'|'+var2+'|'+var3+'|'+var4+'|'+var5+'|'+var6+'|'+var7+'|'+var8+'|'+var9+'|'+var10+'|'+var11+'|'+var12+'|'+var13+'|'+var14+'|'+var15+'|'+var16+'|'+var17+'|'+var18+'|'+var19+'|'+var20+'|'+var21+'|'+var22+'|'+var23
+varStr = var1 + '|' + var2 + '|' + var3 + '|' + var4 + '|' + var5 + '|' + var6 + '|' + var7 + '|' + var8 + '|' + var9 + '|' + var10 + '|' + var11 + '|' + var12 + '|' + var13 + '|' + var14 + '|' + var15 + '|' + var16 + '|' + var17 + '|' + var18 + '|' + var19 + '|' + var20 + '|' + var21 + '|' + var22 + '|' + var23
 
 ###############################################
-varDict = {fixVarName(var2) : 'Air Temp [C] (2 m above surface)',
-           fixVarName(var4) : 'Soil Temperature [C] - 0.1-0.4 m below ground',
-           fixVarName(var8) : 'Volumetric Soil Moisture Content [Fraction] - 0.1-0.4 m below ground',
-           fixVarName(var22) : 'Rainfall Boolean [1/0]',
-           fixVarName(var23) : 'Precipitation Rate [mm]',
-           fixVarName(var1) : 'Relative Humidity [%]',
-           fixVarName(var12) : 'Dew Point Temperature [C]',
-           fixVarName(var13) : 'Pressure Reduced to MSL [Pa]',
-           fixVarName(var14) : 'Pressure [Pa]',
-           fixVarName(var15) : 'Wind Speed (Gust) [m/s]',
-           fixVarName(var16) : 'Total Cloud Cover [%]',
-          }
+varDict = {fixVarName(var2): 'Air Temp [C] (2 m above surface)',
+           fixVarName(var4): 'Soil Temperature [C] - 0.1-0.4 m below ground',
+           fixVarName(var8): 'Volumetric Soil Moisture Content [Fraction] - 0.1-0.4 m below ground',
+           fixVarName(var22): 'Rainfall Boolean [1/0]',
+           fixVarName(var23): 'Precipitation Rate [mm]',
+           fixVarName(var1): 'Relative Humidity [%]',
+           fixVarName(var12): 'Dew Point Temperature [C]',
+           fixVarName(var13): 'Pressure Reduced to MSL [Pa]',
+           fixVarName(var14): 'Pressure [Pa]',
+           fixVarName(var15): 'Wind Speed (Gust) [m/s]',
+           fixVarName(var16): 'Total Cloud Cover [%]',
+           }
+
+varDictDB = {0: 'total_cloud_cover',
+             1: 'wind_speed',
+             2: 'pressure',
+             3: 'pressure_reduced_to_msl',
+             4: 'dew_point_temperature',
+             5: 'relative_humidity',
+             6: 'precipitation_rate',
+             7: 'rainfall_boolean',
+             8: 'volumetric_soil_moisture_content',
+             9: 'soil_temperature',
+             10: 'air_temperature',
+             }
 
 varList = list(varDict.keys())
 
-
 var_val3D = []
 var_val4D = []
-#NOTE: the variable are in opposite order var_val4D[lat, lon, forecast_time_index, 0/1/2/3, where 0=CRAIN, 1=SOILW... etc]
+# NOTE: the variable are in opposite order var_val4D[lat, lon, forecast_time_index, 0/1/2/3, where 0=CRAIN, 1=SOILW... etc]
 
 if len(list_of_ncfiles) > 0:
     updatedDtStr = list_of_ncfiles[0].split('__')[0]
-    updatedDt = datetime.strptime(updatedDtStr,'%Y%m%d_%H%M%S')
+    updatedDt = datetime.strptime(updatedDtStr, '%Y%m%d_%H%M%S')
     updatedDtDisplay = datetime.strftime(updatedDt, '%Y-%m-%dT%H%M%S')
 
-    #get the forecast end dt
+    # get the forecast end dt
     forecastEndDtStr = list_of_ncfiles[-1].split('__')[1].split('__')[0]
-    forecastEndDt = datetime.strptime(forecastEndDtStr,'%Y%m%d_%H%M%S')
+    forecastEndDt = datetime.strptime(forecastEndDtStr, '%Y%m%d_%H%M%S')
     forecastEndDtDisplay = datetime.strftime(forecastEndDt, '%Y-%m-%dT%H%M%S')
 
-    i=0
+    i = 0
     for varName in varList:
         tm_arr = []
-        print('Reading data for: '+ varName)
-        j=0
+        print('Reading data for: ' + varName)
+        j = 0
         for f in list_of_ncfiles:
-            #f = '20211209_000000__20211212_210000__093___gfs.t00z.pgrb2.0p25.f093.grb2.nc'
+            # f = '20211209_000000__20211212_210000__093___gfs.t00z.pgrb2.0p25.f093.grb2.nc'
 
-            ncin = Dataset(outDir+f, "r")
+            ncin = Dataset(outDir + f, "r")
 
             titleStr = varDict[varName]
             var_mat = ncin.variables[varName][:]
 
             if 'Temp' in titleStr:
-                var_val = var_mat.squeeze() - 273.15 #convert to DegC
+                var_val = var_mat.squeeze() - 273.15  # convert to DegC
             elif 'Precipitation Rate' in titleStr:
-                var_val = var_mat.squeeze() * 3600 #convert to mm/hr
+                var_val = var_mat.squeeze() * 3600  # convert to mm/hr
             else:
                 var_val = var_mat.squeeze()
 
             lons = ncin.variables['longitude'][:]
             lats = ncin.variables['latitude'][:]
             tms = ncin.variables['time'][:]
-            #tmstmpStr = datetime.datetime.fromtimestamp(tm.data[0]).strftime('%Y%m%d%H%M%S')
+            # tmstmpStr = datetime.datetime.fromtimestamp(tm.data[0]).strftime('%Y%m%d%H%M%S')
 
-            if j>0:
-                var_val3D = np.dstack((var_val3D,var_val.data))
+            if j > 0:
+                var_val3D = np.dstack((var_val3D, var_val.data))
             else:
                 var_val3D = var_val.data
             tm_arr.append(tms.data[0])
 
             ncin.close()
-            j=j+1
-        if i>0:
-            var_val3D_rshp = np.reshape(var_val3D , (720,1440,time_dim,1))
-            var_val4D = np.append( var_val3D_rshp , var_val4D , axis = 3)
+            j = j + 1
+        if i > 0:
+            var_val3D_rshp = np.reshape(var_val3D, (720, 1440, time_dim, 1))
+            var_val4D = np.append(var_val3D_rshp, var_val4D, axis=3)
         else:
-            var_val4D = np.reshape(var_val3D , (720,1440,time_dim,1))
-        i=i+1
-    Utils.insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt)
+            var_val4D = np.reshape(var_val3D, (720, 1440, time_dim, 1))
+        i = i + 1
+    # Utils.insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt)
 
-def fixToLocalTime(df,lat,lon):
+
+def fixToLocalTime(df, lat, lon):
     tf = timezonefinder.TimezoneFinder()
     # From the lat/long, get the tz-database-style time zone name (e.g. 'America/Vancouver') or None
     timezone_str = tf.certain_timezone_at(lat=float(lat), lng=float(lon))
@@ -189,6 +204,7 @@ def fixToLocalTime(df,lat,lon):
     df['FORECAST_DATE_LOCAL'] = df.FORECAST_DATE_UTC.apply(lambda x: x + timezone.utcoffset(x))
 
     return df
+
 
 def getWeatherForecastVars():
     weatherForecastVars = {}
@@ -210,29 +226,40 @@ def get4DWeatherForecast(lon, lat):
         lat = float(lat)
         lon = float(lon)
 
-        idx=len(varList)-1
+        idx = len(varList) - 1
         updated_dtStr = list_of_ncfiles[0].split('__')[0]
         updated_dt = datetime.strptime(updated_dtStr, '%Y%m%d_%H%M%S')
 
         df_all = pd.DataFrame()
-        updated_dts = [updated_dt for x in range(0,len(tm_arr))]
+        updated_dts = [updated_dt for x in range(0, len(tm_arr))]
         forecast_dts = [datetime.utcfromtimestamp(int(x)) for x in tm_arr]
-        df_all['UPDATED_DATE_UTC']=updated_dts
-        df_all['FORECAST_DATE_UTC']=forecast_dts
+        df_all['UPDATED_DATE_UTC'] = updated_dts
+        df_all['FORECAST_DATE_UTC'] = forecast_dts
 
+        required_lat_lon_result = WeatherForecast.query.filter(
+            WeatherForecast.latitude >= lat, WeatherForecast.longitude >= lon).first()
+
+        result = WeatherForecast.query.filter(WeatherForecast.updated_date_utc == updated_dt,
+                                              WeatherForecast.forecast_date_utc.in_(forecast_dts),
+                                              WeatherForecast.latitude == required_lat_lon_result.latitude,
+                                              WeatherForecast.longitude == required_lat_lon_result.longitude)
+        data = [r for r in result]
         for varName in varList:
             df = pd.DataFrame()
-            #print(varName)
-            #try:
+            # print(varName)
+            # try:
             titleStr = varDict[varName]
 
-            lon_ind = [i for i,v in enumerate(lons.data) if v >= lon][0]
-            lat_ind = [i for i,v in enumerate(lats.data) if v >= lat][0]
+            # lon_ind = [i for i, v in enumerate(lons.data) if v >= lon][0]
+            # lat_ind = [i for i, v in enumerate(lats.data) if v >= lat][0]
 
-            vv = var_val4D[lat_ind, lon_ind,:,idx]
-            df[titleStr]=vv
-            df_all = pd.concat([df_all, df],axis=1)
-            idx=idx-1
+            # vv = var_val4D[lat_ind, lon_ind, :, idx]
+            col_data = np.array([getattr(val, varDictDB[idx]) for val in data])
+            # vv = var_val4D[lat_ind, lon_ind, :, idx]
+            # df[titleStr] = vv
+            df[titleStr] = col_data
+            df_all = pd.concat([df_all, df], axis=1)
+            idx = idx - 1
     except Exception as e:
         raise e
 
@@ -244,14 +271,16 @@ def get4DWeatherForecast(lon, lat):
 
 error_res = {}
 
-#rendering the entry using any of these routes:
+
+# rendering the entry using any of these routes:
 @app.route('/')
 @app.route('/index')
 @app.route('/home')
 def index():
     return render_template('index.html')
 
-#global weather forecast implementation
+
+# global weather forecast implementation
 @app.route('/weatherForecastVariables')
 def weatherForecastVariables():
     try:
@@ -263,10 +292,11 @@ def weatherForecastVariables():
 
     return jsonify(weatherForcastVars)
 
-#global weather forecast implementation
+
+# global weather forecast implementation
 @app.route('/weatherForecast')
 def weatherForecast():
-    returnType = 'json' #default
+    returnType = 'json'  # default
     app.logger.debug('this is a DEBUG message')
 
     geoID = request.args.get('geoid')
@@ -293,120 +323,116 @@ def weatherForecast():
 
         weatherForcast_df = get4DWeatherForecast(lon, lat)
 
-        localWeatherForcast_df = fixToLocalTime(weatherForcast_df,lat,lon)
+        localWeatherForcast_df = fixToLocalTime(weatherForcast_df, lat, lon)
 
-        try:  #try and get a location, if not, then just report on lat, lon
+        try:  # try and get a location, if not, then just report on lat, lon
             geolocator = Nominatim(user_agent="myGeolocator")
-            locStr = geolocator.reverse(str(lat)+","+str(lon))
+            locStr = geolocator.reverse(str(lat) + "," + str(lon))
             tok = locStr.address.split(' ')
             loc = ' '.join(tok[3:])
         except:
-            loc = 'Lat='+str(lat)+', Lon='+str(lon)
+            loc = 'Lat=' + str(lat) + ', Lon=' + str(lon)
 
-        #Make the various graphs
+        # Make the various graphs
         varName = 'Air Temp [C] (2 m above surface)'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         airTempGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-
         varName = 'Soil Temperature [C] - 0.1-0.4 m below ground'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         soilTempGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-
         varName = 'Volumetric Soil Moisture Content [Fraction] - 0.1-0.4 m below ground'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         soilMoistureGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
-
         varName = 'Rainfall Boolean [1/0]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         rainBoolGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Precipitation Rate [mm]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         precipGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Relative Humidity [%]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         relativeHumidityGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Dew Point Temperature [C]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         dewPointGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Pressure Reduced to MSL [Pa]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         mslPressureGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Pressure [Pa]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         pressureGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Wind Speed (Gust) [m/s]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         windSpeedGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
         varName = 'Total Cloud Cover [%]'
-        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL',varName]]
+        df = localWeatherForcast_df[['FORECAST_DATE_LOCAL', varName]]
         df.set_index(['FORECAST_DATE_LOCAL'], inplace=True, drop=True)
-        fig = px.line(df, y=varName, title='Hourly Forecast for '+loc)
+        fig = px.line(df, y=varName, title='Hourly Forecast for ' + loc)
         cloudCoverGraph = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 
     except ValueError:
         error_res['db function call error'] = 'DB function call failed for getWeatherForecast'
-        error_res['value given'] = 'lat='+str(lat)+', lon='+(str(lon))
+        error_res['value given'] = 'lat=' + str(lat) + ', lon=' + (str(lon))
         error_msg = jsonify(error_res)
 
-    if len(weatherForcast_df)>0:
-        if (returnType=='json'):
+    if len(weatherForcast_df) > 0:
+        if (returnType == 'json'):
             res = jsonify(weatherForcast_df.to_dict(orient='records'))
         else:
             res = render_template('forecast.html',
-                airTempGraph=airTempGraph,
-                soilTempGraph=soilTempGraph,
-                soilMoistureGraph=soilMoistureGraph,
-                rainBoolGraph=rainBoolGraph,
-                precipGraph=precipGraph,
-                relativeHumidityGraph=relativeHumidityGraph,
-                dewPointGraph=dewPointGraph,
-                mslPressureGraph=mslPressureGraph,
-                pressureGraph=pressureGraph,
-                windSpeedGraph=windSpeedGraph,
-                cloudCoverGraph=cloudCoverGraph,
-                )
+                                  airTempGraph=airTempGraph,
+                                  soilTempGraph=soilTempGraph,
+                                  soilMoistureGraph=soilMoistureGraph,
+                                  rainBoolGraph=rainBoolGraph,
+                                  precipGraph=precipGraph,
+                                  relativeHumidityGraph=relativeHumidityGraph,
+                                  dewPointGraph=dewPointGraph,
+                                  mslPressureGraph=mslPressureGraph,
+                                  pressureGraph=pressureGraph,
+                                  windSpeedGraph=windSpeedGraph,
+                                  cloudCoverGraph=cloudCoverGraph,
+                                  )
     else:
         res = "{'Error': 'WeatherForecast function returned no data'}"
     return res
 
 
-#main to run the app
+# main to run the app
 if __name__ == '__main__':
-    extra_files = [updated_data_available_file,]
-    app.run(host='0.0.0.0' , port=8000, debug=True, extra_files=extra_files)
+    extra_files = [updated_data_available_file, ]
+    app.run(host='0.0.0.0', port=8000, debug=True, extra_files=extra_files)
 else:
     gunicorn_logger = logging.getLogger('gunicorn.error')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
-

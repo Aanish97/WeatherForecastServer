@@ -6,8 +6,8 @@ class WeatherForecast(db.Model):
     __tablename__ = 'weather_forecast'
 
     id = db.Column(db.Integer, primary_key=True, index=True)
-    latitude = db.Column(db.String)
-    longitude = db.Column(db.String)
+    latitude = db.Column(db.Numeric(8, 3))
+    longitude = db.Column(db.Numeric(8, 3))
     updated_date_utc = db.Column(db.DateTime)
     forecast_date_utc = db.Column(db.DateTime)
     air_temperature = db.Column(db.Numeric(8, 3))
@@ -23,11 +23,6 @@ class WeatherForecast(db.Model):
     total_cloud_cover = db.Column(db.Numeric(8, 3))
     forecast_date_local = db.Column(db.DateTime)
 
-    # def __init__(self, latitude, longitude, updated_date_utc, forecast_date_utc, forecast_date_local, air_temperature,
-    #              soil_temperature,
-    #              volumetric_soil_moisture_content, rainfall_boolean, precipitation_rate, relative_humidity,
-    #              dew_point_temperature, pressure_reduced_to_msl, pressure, wind_speed, total_cloud_cover,
-    #              ):
     def __init__(self, latitude, longitude, updated_date_utc, forecast_date_utc, forecast_date_local, record):
         self.latitude = latitude,
         self.longitude = longitude,
