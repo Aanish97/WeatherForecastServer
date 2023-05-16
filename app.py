@@ -137,61 +137,6 @@ varDictDB = {0: 'total_cloud_cover',
 
 varList = list(varDict.keys())
 
-var_val3D = []
-var_val4D = []
-# NOTE: the variable are in opposite order var_val4D[lat, lon, forecast_time_index, 0/1/2/3, where 0=CRAIN, 1=SOILW... etc]
-
-if len(list_of_ncfiles) > 0:
-    updatedDtStr = list_of_ncfiles[0].split('__')[0]
-    updatedDt = datetime.strptime(updatedDtStr, '%Y%m%d_%H%M%S')
-    updatedDtDisplay = datetime.strftime(updatedDt, '%Y-%m-%dT%H%M%S')
-
-    # get the forecast end dt
-    forecastEndDtStr = list_of_ncfiles[-1].split('__')[1].split('__')[0]
-    forecastEndDt = datetime.strptime(forecastEndDtStr, '%Y%m%d_%H%M%S')
-    forecastEndDtDisplay = datetime.strftime(forecastEndDt, '%Y-%m-%dT%H%M%S')
-
-    i = 0
-    for varName in varList:
-        tm_arr = []
-        print('Reading data for: ' + varName)
-        j = 0
-        for f in list_of_ncfiles:
-            # f = '20211209_000000__20211212_210000__093___gfs.t00z.pgrb2.0p25.f093.grb2.nc'
-
-            ncin = Dataset(outDir + f, "r")
-
-            titleStr = varDict[varName]
-            var_mat = ncin.variables[varName][:]
-
-            if 'Temp' in titleStr:
-                var_val = var_mat.squeeze() - 273.15  # convert to DegC
-            elif 'Precipitation Rate' in titleStr:
-                var_val = var_mat.squeeze() * 3600  # convert to mm/hr
-            else:
-                var_val = var_mat.squeeze()
-
-            lons = ncin.variables['longitude'][:]
-            lats = ncin.variables['latitude'][:]
-            tms = ncin.variables['time'][:]
-            # tmstmpStr = datetime.datetime.fromtimestamp(tm.data[0]).strftime('%Y%m%d%H%M%S')
-
-            if j > 0:
-                var_val3D = np.dstack((var_val3D, var_val.data))
-            else:
-                var_val3D = var_val.data
-            tm_arr.append(tms.data[0])
-
-            ncin.close()
-            j = j + 1
-        if i > 0:
-            var_val3D_rshp = np.reshape(var_val3D, (720, 1440, time_dim, 1))
-            var_val4D = np.append(var_val3D_rshp, var_val4D, axis=3)
-        else:
-            var_val4D = np.reshape(var_val3D, (720, 1440, time_dim, 1))
-        i = i + 1
-    # Utils.insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt)
-
 
 def fixToLocalTime(df, lat, lon):
     tf = timezonefinder.TimezoneFinder()
@@ -220,7 +165,7 @@ def getWeatherForecastVars():
     return weatherForecastVars
 
 
-def get4DWeatherForecast(lon, lat):
+def get4DWeatherForecast(lon, lat, tm_arr):
     df_all = pd.DataFrame()
     try:
         lat = float(lat)
@@ -232,7 +177,7 @@ def get4DWeatherForecast(lon, lat):
 
         df_all = pd.DataFrame()
         updated_dts = [updated_dt for x in range(0, len(tm_arr))]
-        forecast_dts = [datetime.utcfromtimestamp(int(x)) for x in tm_arr]
+        forecast_dts = [datetime.utcfromtimestamp(int(float(x))) for x in tm_arr]
         df_all['UPDATED_DATE_UTC'] = updated_dts
         df_all['FORECAST_DATE_UTC'] = forecast_dts
 
@@ -320,8 +265,10 @@ def weatherForecast():
     except:
         returnType = 'json'
     try:
-
-        weatherForcast_df = get4DWeatherForecast(lon, lat)
+        vars_data_db = Utils.fetch_vars_data_db()
+        if not vars_data_db:
+            return "{'Error': 'WeatherForecast function Vars data not found'}"
+        weatherForcast_df = get4DWeatherForecast(lon, lat, vars_data_db.tm_arr.split(','))
 
         localWeatherForcast_df = fixToLocalTime(weatherForcast_df, lat, lon)
 

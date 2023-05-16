@@ -4,6 +4,7 @@ from datetime import datetime
 
 from dbms.models.weatherForecastModel import WeatherForecast
 from dbms import app, db
+from dbms.models.weatherForecastVarsModel import WeatherForecastVars
 
 
 class Utils:
@@ -42,3 +43,22 @@ class Utils:
         timezone_str = tf.certain_timezone_at(lat=float(lat), lng=float(lon))
         timezone = pytz.timezone(timezone_str)
         return forecast_dts + timezone.utcoffset(forecast_dts)
+
+    @staticmethod
+    def insert_vars_data_db(tm_arr):
+        # Need to populate the WeatherForecastVars table
+        with app.app_context():
+            WeatherForecastVars.query.delete()  # truncate the table
+
+            weather_vars_record = WeatherForecastVars(tm_arr)
+            db.session.add(weather_vars_record)
+            db.session.commit()
+
+    @staticmethod
+    def fetch_vars_data_db():
+        with app.app_context():
+            try:
+                result = WeatherForecastVars.query.first()
+                return result
+            except Exception as e:
+                raise e

@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import requests
 import pandas as pd
 from netCDF4 import Dataset
@@ -7,6 +8,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 from sqlalchemy import *
 import warnings
+from utils import Utils
 
 warnings.filterwarnings("ignore")
 
@@ -230,6 +232,179 @@ for CC in CC_list:
         except Exception as e:
             print(f'{e}, Error in CC=' + CC + ', FFF=' + FFF)
             continue
+
+
+def fixVarName(varName):
+    newVarName = str(varName[1:-1])
+
+    newVarName = str(newVarName).replace(' ', '').replace(':', '_').replace('.', 'D').replace('-', 'M')
+
+    return newVarName
+
+# Fetch data from .nc files
+# Create Dataframes out of the data
+
+outDir = os.getenv('outDir')
+updated_data_available_file = os.getenv('updated_data_available_file')
+list_of_ncfiles = [x for x in os.listdir(outDir) if x.endswith('.nc')]
+list_of_ncfiles.sort()
+time_dim = len(list_of_ncfiles)
+
+"""
+varDict = {'TMP_2maboveground': 'Air Temp [C] (2 m above surface)',
+           'TSOIL_0D1M0D4mbelowground':'Soil Temperature [C] - 0.1-0.4 m below ground',
+           'SOILW_0D1M0D4mbelowground':'Volumetric Soil Moisture Content [Fraction] - 0.1-0.4 m below ground',
+           'CRAIN_surface':'Rainfall Boolean [1/0]',
+          }
+#varList = ['TMP_2maboveground','TSOIL_0D1M0D4mbelowground','SOILW_0D1M0D4mbelowground', 'CRAIN_surface']
+"""
+
+# Relative Humidity [%]
+var1 = ':RH:2 m above ground:'
+
+# Temperature [K]
+var2 = ':TMP:2 m above ground:'
+
+# Soil Temperature [K]
+var3 = ':TSOIL:0-0.1 m below ground:'
+var4 = ':TSOIL:0.1-0.4 m below ground:'
+var5 = ':TSOIL:0.4-1 m below ground:'
+var6 = ':TSOIL:1-2 m below ground:'
+
+# Volumetric Soil Moisture Content [Fraction]
+var7 = ':SOILW:0-0.1 m below ground:'
+var8 = ':SOILW:0.1-0.4 m below ground:'
+var9 = ':SOILW:0.4-1 m below ground:'
+var10 = ':SOILW:1-2 m below ground:'
+
+# Specific Humidity [kg/kg]
+var11 = ':SPFH:2 m above ground:'
+
+# Dew Point Temperature [K]
+var12 = ':DPT:2 m above ground:'
+
+# Pressure Reduced to MSL [Pa]
+var13 = ':PRMSL:mean sea level:'
+
+# Pressure [Pa]
+var14 = ':PRES:max wind:'
+
+# Wind Speed (Gust) [m/s]
+var15 = ':GUST:surface:'
+
+# Total Cloud Cover [%]
+var16 = ':TCDC:entire atmosphere:'
+
+# Downward Short-Wave Radiation Flux [W/m^2]
+var17 = ':DSWRF:surface:'
+
+# Downward Long-Wave Radiation Flux [W/m^2]
+var18 = ':DLWRF:surface:'
+
+# Upward Short-Wave Radiation Flux [W/m^2]
+var19 = ':USWRF:surface:'
+
+# Upward Long-Wave Radiation Flux [W/m^2]
+var20 = ':ULWRF:surface:'
+
+# Upward Long-Wave Radiation Flux [W/m^2]
+var20 = ':ULWRF:surface:'
+
+# Soil Type [-]
+var21 = ':SOTYP:surface:'
+
+# Categorical Rain [-] (3 hr forecast)
+var22 = ':CRAIN:surface:'
+
+# Precipitation Rate [kg/m^2/s]
+var23 = ':PRATE:surface:'
+
+varStr = var1 + '|' + var2 + '|' + var3 + '|' + var4 + '|' + var5 + '|' + var6 + '|' + var7 + '|' + var8 + '|' + var9 + '|' + var10 + '|' + var11 + '|' + var12 + '|' + var13 + '|' + var14 + '|' + var15 + '|' + var16 + '|' + var17 + '|' + var18 + '|' + var19 + '|' + var20 + '|' + var21 + '|' + var22 + '|' + var23
+
+###############################################
+varDict = {fixVarName(var2): 'Air Temp [C] (2 m above surface)',
+           fixVarName(var4): 'Soil Temperature [C] - 0.1-0.4 m below ground',
+           fixVarName(var8): 'Volumetric Soil Moisture Content [Fraction] - 0.1-0.4 m below ground',
+           fixVarName(var22): 'Rainfall Boolean [1/0]',
+           fixVarName(var23): 'Precipitation Rate [mm]',
+           fixVarName(var1): 'Relative Humidity [%]',
+           fixVarName(var12): 'Dew Point Temperature [C]',
+           fixVarName(var13): 'Pressure Reduced to MSL [Pa]',
+           fixVarName(var14): 'Pressure [Pa]',
+           fixVarName(var15): 'Wind Speed (Gust) [m/s]',
+           fixVarName(var16): 'Total Cloud Cover [%]',
+           }
+
+varDictDB = {0: 'total_cloud_cover',
+             1: 'wind_speed',
+             2: 'pressure',
+             3: 'pressure_reduced_to_msl',
+             4: 'dew_point_temperature',
+             5: 'relative_humidity',
+             6: 'precipitation_rate',
+             7: 'rainfall_boolean',
+             8: 'volumetric_soil_moisture_content',
+             9: 'soil_temperature',
+             10: 'air_temperature',
+             }
+
+varList = list(varDict.keys())
+
+var_val3D = []
+var_val4D = []
+# NOTE: the variable are in opposite order var_val4D[lat, lon, forecast_time_index, 0/1/2/3, where 0=CRAIN, 1=SOILW... etc]
+
+if len(list_of_ncfiles) > 0:
+    updatedDtStr = list_of_ncfiles[0].split('__')[0]
+    updatedDt = datetime.strptime(updatedDtStr, '%Y%m%d_%H%M%S')
+    updatedDtDisplay = datetime.strftime(updatedDt, '%Y-%m-%dT%H%M%S')
+
+    # get the forecast end dt
+    forecastEndDtStr = list_of_ncfiles[-1].split('__')[1].split('__')[0]
+    forecastEndDt = datetime.strptime(forecastEndDtStr, '%Y%m%d_%H%M%S')
+    forecastEndDtDisplay = datetime.strftime(forecastEndDt, '%Y-%m-%dT%H%M%S')
+
+    i = 0
+    for varName in varList:
+        tm_arr = []
+        print('Reading data for: ' + varName)
+        j = 0
+        for f in list_of_ncfiles:
+            # f = '20211209_000000__20211212_210000__093___gfs.t00z.pgrb2.0p25.f093.grb2.nc'
+
+            ncin = Dataset(outDir + f, "r")
+
+            titleStr = varDict[varName]
+            var_mat = ncin.variables[varName][:]
+
+            if 'Temp' in titleStr:
+                var_val = var_mat.squeeze() - 273.15  # convert to DegC
+            elif 'Precipitation Rate' in titleStr:
+                var_val = var_mat.squeeze() * 3600  # convert to mm/hr
+            else:
+                var_val = var_mat.squeeze()
+
+            lons = ncin.variables['longitude'][:]
+            lats = ncin.variables['latitude'][:]
+            tms = ncin.variables['time'][:]
+            # tmstmpStr = datetime.datetime.fromtimestamp(tm.data[0]).strftime('%Y%m%d%H%M%S')
+
+            if j > 0:
+                var_val3D = np.dstack((var_val3D, var_val.data))
+            else:
+                var_val3D = var_val.data
+            tm_arr.append(tms.data[0])
+
+            ncin.close()
+            j = j + 1
+        if i > 0:
+            var_val3D_rshp = np.reshape(var_val3D, (720, 1440, time_dim, 1))
+            var_val4D = np.append(var_val3D_rshp, var_val4D, axis=3)
+        else:
+            var_val4D = np.reshape(var_val3D, (720, 1440, time_dim, 1))
+        i = i + 1
+    Utils.insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt)
+    Utils.insert_vars_data_db(', '.join([str(item) for item in tm_arr]))
 
 # touch file
 print('\nWriting updated_data_available.txt file')
