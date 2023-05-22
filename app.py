@@ -268,7 +268,7 @@ def weatherForecast():
         vars_data_db = Utils.fetch_vars_data_db()
         if not vars_data_db:
             return "{'Error': 'WeatherForecast function Vars data not found'}"
-        weatherForcast_df = get4DWeatherForecast(lon, lat, vars_data_db.tm_arr.split(','))
+        weatherForcast_df = get4DWeatherForecast(lon, lat, vars_data_db)
 
         localWeatherForcast_df = fixToLocalTime(weatherForcast_df, lat, lon)
 

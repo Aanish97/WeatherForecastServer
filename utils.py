@@ -50,15 +50,16 @@ class Utils:
         with app.app_context():
             WeatherForecastVars.query.delete()  # truncate the table
 
-            weather_vars_record = WeatherForecastVars(tm_arr)
-            db.session.add(weather_vars_record)
+            weather_vars_records = [WeatherForecastVars(record) for record in tm_arr]
+            db.session.bulk_save_objects(weather_vars_records, return_defaults=True)
             db.session.commit()
 
     @staticmethod
     def fetch_vars_data_db():
         with app.app_context():
             try:
-                result = WeatherForecastVars.query.first()
-                return result
+                result = WeatherForecastVars.query.all()
+                data = [r.tm_arr for r in result]
+                return data
             except Exception as e:
                 raise e

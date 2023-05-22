@@ -404,7 +404,7 @@ if len(list_of_ncfiles) > 0:
             var_val4D = np.reshape(var_val3D, (720, 1440, time_dim, 1))
         i = i + 1
     Utils.insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt)
-    Utils.insert_vars_data_db(', '.join([str(item) for item in tm_arr]))
+    Utils.insert_vars_data_db(tm_arr)
 
 # touch file
 print('\nWriting updated_data_available.txt file')
