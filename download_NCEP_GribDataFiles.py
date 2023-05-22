@@ -202,7 +202,7 @@ for CC in CC_list:
 
             outFile = outDir + frct_dtStr + '__' + dest_dtStr + '__' + FFF + '___' + gribFile
             print('\n\n\tDownloading GRIB File ' + gribFile + ' --> ' + outFile)
-            print(f'\n{urlStr}')
+            print(f"\n{urlStr}")
             resp = urllib.request.urlretrieve(urlStr, outFile)
             print('\tDone!')
 
@@ -356,13 +356,13 @@ var_val4D = []
 
 if len(list_of_ncfiles) > 0:
     updatedDtStr = list_of_ncfiles[0].split('__')[0]
-    updatedDt = datetime.strptime(updatedDtStr, '%Y%m%d_%H%M%S')
-    updatedDtDisplay = datetime.strftime(updatedDt, '%Y-%m-%dT%H%M%S')
+    updatedDt = datetime.datetime.strptime(updatedDtStr, '%Y%m%d_%H%M%S')
+    updatedDtDisplay = datetime.datetime.strftime(updatedDt, '%Y-%m-%dT%H%M%S')
 
     # get the forecast end dt
     forecastEndDtStr = list_of_ncfiles[-1].split('__')[1].split('__')[0]
-    forecastEndDt = datetime.strptime(forecastEndDtStr, '%Y%m%d_%H%M%S')
-    forecastEndDtDisplay = datetime.strftime(forecastEndDt, '%Y-%m-%dT%H%M%S')
+    forecastEndDt = datetime.datetime.strptime(forecastEndDtStr, '%Y%m%d_%H%M%S')
+    forecastEndDtDisplay = datetime.datetime.strftime(forecastEndDt, '%Y-%m-%dT%H%M%S')
 
     i = 0
     for varName in varList:
