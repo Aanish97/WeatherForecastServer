@@ -377,6 +377,7 @@ if len(list_of_ncfiles) > 0:
             titleStr = varDict[varName]
             var_mat = ncin.variables.get(varName, [])[:]
             if len(var_mat) == 0:
+                time_dim = time_dim - 1
                 continue
             if 'Temp' in titleStr:
                 var_val = var_mat.squeeze() - 273.15  # convert to DegC

@@ -11,13 +11,15 @@ class Utils:
     @staticmethod
     def insert_var_val_4d_db(lats, lons, var_val4D, tm_arr, updatedDt):
         try:
+            with app.app_context():
+                WeatherForecast.query.delete()  # truncate the table
             shape = var_val4D.shape
-            # for lats_idx in range(shape[0]):  # lats
-            for lats_idx in range(2):  # lats
+            for lats_idx in range(shape[0]):  # lats
+                # for lats_idx in range(2):  # lats
                 print(f":::   {lats_idx + 1}/720   ::: batch of lats")
                 records = []
-                # for lons_idx in range(shape[1]):  # lons
-                for lons_idx in range(2):  # lons
+                for lons_idx in range(shape[1]):  # lons
+                    # for lons_idx in range(2):  # lons
                     for rows_idx in range(shape[2]):  # rows
                         features_data = var_val4D[lats_idx][lons_idx][rows_idx].tolist()
                     weather_record = WeatherForecast(lats[lats_idx], lons[lons_idx], updatedDt,
