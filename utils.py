@@ -24,8 +24,10 @@ class Utils:
                         features_data = var_val4D[lats_idx][lons_idx][rows_idx].tolist()
                     weather_record = WeatherForecast(lats[lats_idx], lons[lons_idx], updatedDt,
                                                      datetime.fromtimestamp(tm_arr[rows_idx]),
-                                                     Utils.fetchLocalTime(lats[lats_idx], lons[lons_idx],
-                                                                          tm_arr[rows_idx]),
+                                                     datetime.fromtimestamp(tm_arr[rows_idx]),
+                                                     # passing forecast date as local date
+                                                     # Utils.fetchLocalTime(lats[lats_idx], lons[lons_idx],
+                                                     #                      tm_arr[rows_idx]),
                                                      features_data)
                     weather_record.rainfall_boolean = features_data[7]
                     records.append(weather_record)
